@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 
 
+
 export function App() {
 
   const [cards, setCards] = useState([])
@@ -31,14 +32,6 @@ useEffect(() => {
           setTotal(response.data.total)
           return response.data.hits
         })
-        .then(data => {
-          const dataArray = [];
-          data.map(({ id, webformatURL, largeImageURL }) => dataArray.push({ id, webformatURL, largeImageURL }))
-          if (dataArray.length === 0) {
-                     return toast.error('Search query is invalid'); 
-          }
-          return dataArray
-        })
         .then((newCards) => {
           return setCards(cards => [...cards, ...newCards])
         })
@@ -54,11 +47,7 @@ useEffect(() => {
     }
   }, [search, page])
 
-  useEffect(() => {
-    if (error) {
-      console.log(error)
-    }
-  },[error])
+  
 
   const onSubmit = (e) => {
     e.preventDefault()
