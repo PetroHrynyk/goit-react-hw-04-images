@@ -37,15 +37,17 @@ useEffect(() => {
         })
         .catch(error => {
           setError(error)
+          
                   return toast.error('Sorry, we have a problem'); 
         })
         .finally(() => {
           setLoading(false)
         })
       }
-      fetchPosts()
+     fetchPosts()
     }
-  }, [search, page])
+  }, [search, page,error ])
+
 
   
 
@@ -81,6 +83,7 @@ useEffect(() => {
 
   return (
       <div className={styles.app}>
+      
         <Searchbar onSubmit={onSubmit} />
         <ImageGallery cards={cards} onOpen={openModal} />
         {loading && <Loader/>}
