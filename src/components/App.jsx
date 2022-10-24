@@ -4,18 +4,16 @@ import { Searchbar } from "./Searchbar/Searchbar";
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal'
-import axios from "axios";
 import styles from './App.module.css'
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
-
+import 'react-toastify/dist/ReactToastify.css';
+import { fetchPosts } from '../services/posts';
 
 
 export function App() {
 
   const [cards, setCards] = useState([])
   const [search, setSearch] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [showModal, setShowModal] = useState(false)
@@ -24,32 +22,16 @@ export function App() {
 
 useEffect(() => {
   if (search !== '') {
-      const URL = 'https://pixabay.com/api/';
-      const KEY = '29542230-6fb76d8021b96e9e1ee6ed22a';
-      const fetchPosts  = () => {
-        axios.get(`${URL}?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`)
-          .then(response => {
-          setTotal(response.data.total)
-          return response.data.hits
-        })
-        .then((newCards) => {
-          return setCards(cards => [...cards, ...newCards])
-        })
-        .catch(error => {
-          setError(error)
-          
-                  return toast.error('Sorry, we have a problem'); 
-        })
-        .finally(() => {
-          setLoading(false)
-        })
-      }
-     fetchPosts()
+    fetchPosts(search, page).then(data => {
+       setTotal(data.total)
+       setCards([...cards, ...data.cards])
+     }).catch(() => {
+       return toast.error('Sorry, we have a problem');
+     }).finally(() => {
+         setLoading(false)
+       })
     }
-  }, [search, page,error ])
-
-
-  
+  }, [search, page])
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -58,24 +40,23 @@ useEffect(() => {
       setCards([])
       setSearch(searchValue)
       setPage(1)
-      setError('')
       setLoading(true)
     } else if (searchValue === "") {
 
-      return toast.warn('Input is empty!'); 
+      return toast.warn('Input is empty!');
     }
-    
+
   }
 
   const onLoadMore = () => {
     setPage(page + 1)
     setLoading(true)
   }
-  
+
   const toggleModal = () => {
     setShowModal(!showModal)
   }
-  
+
   const openModal = (largeImageURL) => {
     setModalImage(largeImageURL)
     toggleModal()
@@ -83,7 +64,7 @@ useEffect(() => {
 
   return (
       <div className={styles.app}>
-      
+
         <Searchbar onSubmit={onSubmit} />
         <ImageGallery cards={cards} onOpen={openModal} />
         {loading && <Loader/>}
@@ -99,7 +80,7 @@ useEffect(() => {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-        /> 
+        />
       </div>
     );
 };
