@@ -24,14 +24,14 @@ useEffect(() => {
   if (search !== '') {
     fetchPosts(search, page).then(data => {
        setTotal(data.total)
-       setCards([...cards, ...data.cards])
+       setCards(prev=>[...prev, ...data.cards])
      }).catch(() => {
        return toast.error('Sorry, we have a problem');
      }).finally(() => {
          setLoading(false)
        })
     }
-  }, [search, page, cards])
+  }, [search, page])
 
   const onSubmit = (e) => {
     e.preventDefault()
