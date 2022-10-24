@@ -31,7 +31,7 @@ useEffect(() => {
          setLoading(false)
        })
     }
-  }, [search, page, cards])
+  }, [search, page])
 
   const onSubmit = (e) => {
     e.preventDefault()
